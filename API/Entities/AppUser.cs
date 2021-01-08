@@ -7,5 +7,7 @@ namespace API.Entities
     public int Id { get; set; }
     // ASP.NET Identity uses UserName, not Username so we will stick with the former
     public string UserName { get; set; }
+    public byte[] PasswordHash { get; set; }
+    public byte[] PasswordSalt { get; set; }
   }
 }
