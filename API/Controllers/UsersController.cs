@@ -1,43 +1,55 @@
 using System.Collections.Generic;
-using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using API.Data;
-using API.Entities;
+using API.DTOs;
+using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
+  [Authorize]
   public class UsersController : BaseApiController
   {
-    private readonly DataContext _context;
+    private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
 
-    public UsersController(DataContext context)
+    public UsersController(IUserRepository userRepository, IMapper mapper)
     {
-      _context = context;
+      _userRepository = userRepository;
+      _mapper = mapper;
     }
 
-    [AllowAnonymous]
     [HttpGet]
-    // There are several collections inside .NET but here we are returning IEnumerable of type AppUser which allows us to use simple iteration over a collection of a specified type - we just need a simple list that we can return to a client
-    // We could've also used a List which also offers methods to search, sort and manipulate lists
-    public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
     {
-      var users = await _context.Users.ToListAsync();
+      var users = await _userRepository.GetMembersAsync();
 
-      return users;
+      return Ok(users);
     }
 
-    // [Authorize] attribute ensures that our endpoint is protected with authentication
-    [Authorize]
-    [HttpGet("{id}")]
-    // Here we can see the effects of type safety - if we try to return user and leave IEnumerable it will red underline the user and complain that it can't implicitly convert a type of AppUser to a collection   
-    public async Task<ActionResult<AppUser>> GetUser(int id)
+    [HttpGet("{username}")]
+    public async Task<ActionResult<MemberDto>> GetUser(string username)
     {
-      var user = await _context.Users.FindAsync(id);
+      var user = await _userRepository.GetMemberAsync(username);
 
       return user;
+    }
+
+    [HttpPut]
+    public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
+    {
+      var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      var user = await _userRepository.GetUserByUsernameAsync(username);
+
+      _mapper.Map(memberUpdateDto, user);
+
+      _userRepository.Update(user);
+
+      if (await _userRepository.SaveAllAsync()) return NoContent();
+
+      return BadRequest("Failed to update user");
     }
   }
 }

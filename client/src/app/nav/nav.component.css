@@ -2,3 +2,19 @@
 .dropdown-item {
   cursor: pointer;
 }
+
+.dropdown-item:hover {
+  background-color: #f4f4f4;
+}
+
+.dropdown-item {
+  color: #555555 !important;
+}
+
+.dropdown-item:hover {
+  color: black !important;
+}
+
+.active {
+  color: #18bc9c !important;
+}

@@ -14,6 +14,7 @@ namespace API.Controllers
   {
     private readonly DataContext _context;
     private readonly ITokenService _tokenService;
+
     public AccountController(DataContext context, ITokenService tokenService)
     {
       _tokenService = tokenService;
@@ -38,6 +39,7 @@ namespace API.Controllers
       };
 
       _context.Users.Add(user);
+
       await _context.SaveChangesAsync();
 
       return new UserDto

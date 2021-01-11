@@ -1,0 +1,68 @@
+<div class="row" *ngIf="member">
+  <div class="col-4">
+      <h1>Your profile</h1>
+  </div>
+  <div class="col-8">
+      <div class="alert alert-info" *ngIf="editForm.dirty">
+          <strong>Information: </strong> You have made changes. Any unsaved changes will be lost
+      </div>
+  </div>
+  <div class="col-4">
+      <div class="card">
+          <img src="{{member.photoUrl || './assets/user.png'}}" alt="{{member.knownAs}}" 
+              class="card-img-top img-thumbnail">
+          <div class="card-body">
+              <div>
+                  <strong>Location:</strong>
+                  <p>{{member.city}}, {{member.country}}</p>
+              </div>
+              <div>
+                  <strong>Age:</strong>
+                  <p>{{member.age}}</p>
+              </div>
+              <div>
+                  <strong>Last Active:</strong>
+                  <p>{{member.lastActive}}</p>
+              </div>
+              <div>
+                  <strong>Member since:</strong>
+                  <p>{{member.created}}</p>
+              </div>
+          </div>
+          <div class="card-footer">
+              <button [disabled]="!editForm.dirty" form="editForm" type="submit" class="btn btn-success btn-block">Save Changes</button>
+          </div>
+      </div>
+  </div>
+
+  <div class="col-8">
+      <tabset class="member-tabset">
+          <tab heading='About {{member.knownAs}}'>
+              <!-- our button Save Changes is not in this particular form so we need to hook it up to the form for it to submit the data. We will do that with adding id property to the form and give button the form property -->
+              <!-- with adding #editForm="ngForm" we also get access to the form elsewhere inside our template so we will add *ngIf="editForm.dirty" to the alert so as soon as we start typing the alert pops our -->
+              <!-- we should also do the same to the button Save Changes -->
+              <!-- with adding #editForm="ngForm" we also get access to this inside our component by using @ViewChild('editForm') editForm: NgForm; -->
+              <form #editForm="ngForm" id="editForm" (ngSubmit)="updateMember()">
+                  <h4>Description</h4>
+                  <textarea class="form-control" [(ngModel)]="member.introduction" name="introduction" rows="6"></textarea>
+                  <h4 class="mt-2">Looking for</h4>
+                  <!-- name="lookingFor" is important! Angular uses it to track the property inside the form. ngModel gives us the binding and the name property is used in the background so when we update or reset our form angular is looking for this name -->
+                  <textarea class="form-control" [(ngModel)]="member.lookingFor" name="lookingFor" rows="6"></textarea>
+                  <h4 class="mt-2">Interests</h4>
+                  <textarea class="form-control" [(ngModel)]="member.interests" name="interests" rows="6"></textarea>
+                  <h4 class="mt-2">Location Details: </h4>
+                  <div class="form-inline">
+                      <label for="city">City: </label>
+                      <input [(ngModel)]="member.city" type="text" name="city" class="form-control mx-2">
+                      <label for="city">Country: </label>
+                      <input [(ngModel)]="member.country" type="text" name="country" class="form-control mx-2">
+                  </div>
+              </form>
+             
+          </tab>
+          <tab heading='Edit Photos'>
+              <p>Photo edit will go here</p>
+          </tab>
+      </tabset>
+  </div>
+</div>

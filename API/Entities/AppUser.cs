@@ -1,13 +1,30 @@
+using System;
+using System.Collections.Generic;
+
 namespace API.Entities
 {
   public class AppUser
   {
-    // All of these properties need to be public so EF can get and set these properties
-    // Because EF is convention over configuration based we need to call this Id if we want it to be recognized as a primary key
     public int Id { get; set; }
-    // ASP.NET Identity uses UserName, not Username so we will stick with the former
     public string UserName { get; set; }
     public byte[] PasswordHash { get; set; }
     public byte[] PasswordSalt { get; set; }
+    public DateTime DateOfBirth { get; set; }
+    public string KnownAs { get; set; }
+    public DateTime Created { get; set; } = DateTime.Now;
+    public DateTime LastActive { get; set; } = DateTime.Now;
+    public string Gender { get; set; }
+    public string Introduction { get; set; }
+    public string LookingFor { get; set; }
+    public string Interests { get; set; }
+    public string City { get; set; }
+    public string Country { get; set; }
+    public ICollection<Photo> Photos { get; set; }
+
+    // public int GetAge()
+    // {
+    //   // inside we will extend the methods available inside the DateTime class because it does not give us the option to calculate the age on its own
+    //   return DateOfBirth.CalculateAge();
+    // }
   }
 }
