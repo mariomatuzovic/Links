@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { Member } from 'src/app/_models/member';
+import { Pagination } from 'src/app/_models/pagination';
+import { User } from 'src/app/_models/user';
+import { UserParams } from 'src/app/_models/userParams';
 import { MembersService } from 'src/app/_services/members.service';
 
 @Component({
@@ -9,21 +11,37 @@ import { MembersService } from 'src/app/_services/members.service';
   styleUrls: ['./member-list.component.css']
 })
 export class MemberListComponent implements OnInit {
-  // members: Member[];
-  // here we will take advantage of the async pipe so we can subscribe to this observable
-  members$: Observable<Member[]>;
+  members: Member[];
+  pagination: Pagination;
+  userParams: UserParams;
+  user: User;
+  genderList = [{ value: 'male', display: 'Males' }, { value: 'female', display: 'Females' }];
 
-  constructor(private memberService: MembersService) { }
-
-  ngOnInit(): void {
-    // this.loadMembers();
-    this.members$ = this.memberService.getMembers();
+  constructor(private memberService: MembersService) {
+    this.userParams = this.memberService.getUserParams();
   }
 
-  // loadMembers() {
-  //   // we don't need to do any error handling because we have taken care of that inside our error interceptor
-  //   this.memberService.getMembers().subscribe(members => {
-  //     this.members = members;
-  //   });
-  // }
+  ngOnInit(): void {
+    this.loadMembers();
+  }
+
+  loadMembers() {
+    this.memberService.setUserParams(this.userParams);
+    this.memberService.getMembers(this.userParams).subscribe(response => {
+      this.members = response.result;
+      this.pagination = response.pagination;
+    });
+  }
+
+  resetFilters() {
+    this.userParams = this.memberService.resetUserParams();
+    this.userParams = new UserParams(this.user);
+    this.loadMembers();
+  }
+
+  pageChanged(event: any) {
+    this.userParams.pageNumber = event.page;
+    this.memberService.setUserParams(this.userParams);
+    this.loadMembers();
+  }
 }

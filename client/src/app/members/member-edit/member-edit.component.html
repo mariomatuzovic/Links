@@ -22,11 +22,11 @@
               </div>
               <div>
                   <strong>Last Active:</strong>
-                  <p>{{member.lastActive}}</p>
+                  <p>{{member.lastActive | timeago}}</p>
               </div>
               <div>
                   <strong>Member since:</strong>
-                  <p>{{member.created}}</p>
+                  <p>{{member.created | date: 'dd MMM yyy'}}</p>
               </div>
           </div>
           <div class="card-footer">
@@ -38,15 +38,10 @@
   <div class="col-8">
       <tabset class="member-tabset">
           <tab heading='About {{member.knownAs}}'>
-              <!-- our button Save Changes is not in this particular form so we need to hook it up to the form for it to submit the data. We will do that with adding id property to the form and give button the form property -->
-              <!-- with adding #editForm="ngForm" we also get access to the form elsewhere inside our template so we will add *ngIf="editForm.dirty" to the alert so as soon as we start typing the alert pops our -->
-              <!-- we should also do the same to the button Save Changes -->
-              <!-- with adding #editForm="ngForm" we also get access to this inside our component by using @ViewChild('editForm') editForm: NgForm; -->
               <form #editForm="ngForm" id="editForm" (ngSubmit)="updateMember()">
                   <h4>Description</h4>
                   <textarea class="form-control" [(ngModel)]="member.introduction" name="introduction" rows="6"></textarea>
                   <h4 class="mt-2">Looking for</h4>
-                  <!-- name="lookingFor" is important! Angular uses it to track the property inside the form. ngModel gives us the binding and the name property is used in the background so when we update or reset our form angular is looking for this name -->
                   <textarea class="form-control" [(ngModel)]="member.lookingFor" name="lookingFor" rows="6"></textarea>
                   <h4 class="mt-2">Interests</h4>
                   <textarea class="form-control" [(ngModel)]="member.interests" name="interests" rows="6"></textarea>
@@ -61,7 +56,7 @@
              
           </tab>
           <tab heading='Edit Photos'>
-              <p>Photo edit will go here</p>
+              <app-photo-editor [member]="member"></app-photo-editor>
           </tab>
       </tabset>
   </div>

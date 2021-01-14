@@ -16,16 +16,12 @@ export class MemberEditComponent implements OnInit {
   @ViewChild('editForm') editForm: NgForm;
   member: Member;
   user: User;
-  // if the user closes the browser or does anything outside of our angular app we will give them the notification that the changes will be lost
-  // @HostListener gives us access to the browser events and we want to access the window:beforeunload
-  // we can't style that notification
   @HostListener('window:beforeunload', ['$event']) unloadNotification($event: any) {
     if (this.editForm.dirty) {
       $event.returnValue = true;
     }
   }
 
-  // get a hold of the currentUser from our AccountService and we will use that to get the username for that user so we can go and fetch that particular member
   constructor(
     private accountService: AccountService,
     private memberService: MembersService,
@@ -46,7 +42,6 @@ export class MemberEditComponent implements OnInit {
   updateMember() {
     this.memberService.updateMember(this.member).subscribe(() => {
       this.toastr.success('Profile updated successfully');
-      // we need to reset the form state after we saved changes!
       this.editForm.reset(this.member);
     });
   }

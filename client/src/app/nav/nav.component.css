@@ -15,6 +15,12 @@
   color: black !important;
 }
 
+img {
+  max-height: 50px;
+  border: 2px solid #fff;
+  display: inline;
+}
+
 .active {
   color: #18bc9c !important;
 }
